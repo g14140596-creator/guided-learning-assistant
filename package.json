@@ -1,0 +1,14 @@
+{
+  "name": "guided-learning-assistant",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "A guided programming tutor prototype for university introductory C/C++ courses.",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "serve": "python3 -m http.server 4173"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

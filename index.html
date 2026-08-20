@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="面向大学程序设计公共课的引导式学习助教原型" />
+    <title>循码 · 引导式学习助教</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="循码首页">
+        <span class="brand-mark">循</span>
+        <span><strong>循码</strong><small>Guided Learning Assistant</small></span>
+      </a>
+      <nav class="view-switch" aria-label="视图切换">
+        <button class="nav-button active" data-view="student">学生学习台</button>
+        <button class="nav-button" data-view="teacher">教师观察台</button>
+      </nav>
+      <div class="status-pill"><span></span> 本地安全演示</div>
+    </header>
+
+    <main>
+      <section id="studentView" class="view active">
+        <aside class="course-rail panel">
+          <div class="rail-heading">
+            <p class="eyebrow">程序设计基础 · C++</p>
+            <h1>从“会运行”到<br />真正看懂代码</h1>
+            <p>助教不会立刻给答案，而是用讲解、预测、纠错和追问带你完成理解。</p>
+          </div>
+          <div id="lessonList" class="lesson-list"></div>
+          <div class="learning-contract">
+            <span>学习约定</span>
+            <p>先思考，再运行；先解释，再修改。</p>
+          </div>
+        </aside>
+
+        <section class="workspace">
+          <div class="progress-card panel">
+            <div>
+              <p class="eyebrow" id="lessonLabel">学习路径</p>
+              <h2 id="lessonTitle">循环与累加器</h2>
+            </div>
+            <div class="progress-wrap">
+              <div class="progress-meta"><span id="stepText">第 1 / 4 步</span><strong id="progressPercent">25%</strong></div>
+              <div class="progress-track"><span id="progressBar"></span></div>
+            </div>
+          </div>
+
+          <div class="stage panel">
+            <div class="stage-header">
+              <div class="mentor-avatar">AI</div>
+              <div><strong>循码助教</strong><small id="stageHint">先建立知识骨架</small></div>
+              <span class="strategy-tag" id="strategyTag">核心讲解</span>
+            </div>
+            <div id="stageContent" class="stage-content"></div>
+            <div class="stage-actions">
+              <button id="backButton" class="button ghost">上一步</button>
+              <button id="nextButton" class="button primary">我理解了，继续</button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="insight-rail">
+          <div class="panel insight-card">
+            <p class="eyebrow">本节能力目标</p>
+            <div id="objectives" class="objective-list"></div>
+          </div>
+          <div class="panel insight-card">
+            <p class="eyebrow">助教策略</p>
+            <div class="strategy-flow">
+              <span class="done">讲</span><i></i><span>读</span><i></i><span>答</span><i></i><span>评</span>
+            </div>
+            <p class="muted">每次评价都说明“哪里对、为什么、下一步怎么改”。</p>
+          </div>
+          <div class="panel insight-card tip-card">
+            <span>💡</span>
+            <div><strong>不是考试</strong><p>答错会触发更小的提示，不会直接结束学习。</p></div>
+          </div>
+        </aside>
+      </section>
+
+      <section id="teacherView" class="view teacher-view">
+        <div class="teacher-hero">
+          <div><p class="eyebrow">教师观察台 · Prototype</p><h1>看见“答案之外”的学习过程</h1><p>用过程数据发现学生究竟卡在概念、代码阅读，还是表达与反思。</p></div>
+          <button class="button secondary" id="exportButton">导出本地记录</button>
+        </div>
+        <div class="metric-grid" id="metricGrid"></div>
+        <div class="teacher-grid">
+          <section class="panel dashboard-card">
+            <div class="card-title"><div><p class="eyebrow">能力画像</p><h2>多维评价雷达</h2></div><span class="legend-dot">● 当前学生</span></div>
+            <div id="skillBars" class="skill-bars"></div>
+          </section>
+          <section class="panel dashboard-card">
+            <div class="card-title"><div><p class="eyebrow">需关注</p><h2>关键学习信号</h2></div></div>
+            <div id="signals" class="signal-list"></div>
+          </section>
+          <section class="panel dashboard-card wide">
+            <div class="card-title"><div><p class="eyebrow">最近活动</p><h2>学习过程记录</h2></div><button class="text-button" id="resetButton">重置演示数据</button></div>
+            <div id="activityTable" class="activity-table"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <div id="toast" class="toast" role="status"></div>
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>
