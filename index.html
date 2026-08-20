@@ -4,10 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="面向大学程序设计公共课的引导式学习助教原型" />
+    <meta name="theme-color" content="#155f4b" />
     <title>循码 · 引导式学习助教</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="manifest" href="manifest.webmanifest" />
   </head>
   <body>
+    <a class="skip-link" href="#mainContent">跳到主要内容</a>
     <div class="ambient ambient-one"></div>
     <div class="ambient ambient-two"></div>
     <header class="topbar">
@@ -19,10 +22,10 @@
         <button class="nav-button active" data-view="student">学生学习台</button>
         <button class="nav-button" data-view="teacher">教师观察台</button>
       </nav>
-      <div class="status-pill"><span></span> 本地安全演示</div>
+      <div class="status-pill"><span></span> 隐私优先 · 本地保存 <b>V2</b></div>
     </header>
 
-    <main>
+    <main id="mainContent">
       <section id="studentView" class="view active">
         <aside class="course-rail panel">
           <div class="rail-heading">
@@ -34,6 +37,11 @@
           <div class="learning-contract">
             <span>学习约定</span>
             <p>先思考，再运行；先解释，再修改。</p>
+          </div>
+          <div class="resume-card" id="resumeCard" hidden>
+            <span>上次学习</span>
+            <strong id="resumeTitle"></strong>
+            <button id="resumeButton">继续学习 →</button>
           </div>
         </aside>
 
@@ -70,7 +78,7 @@
           </div>
           <div class="panel insight-card">
             <p class="eyebrow">助教策略</p>
-            <div class="strategy-flow">
+            <div class="strategy-flow" id="strategyFlow">
               <span class="done">讲</span><i></i><span>读</span><i></i><span>答</span><i></i><span>评</span>
             </div>
             <p class="muted">每次评价都说明“哪里对、为什么、下一步怎么改”。</p>
@@ -85,8 +93,13 @@
       <section id="teacherView" class="view teacher-view">
         <div class="teacher-hero">
           <div><p class="eyebrow">教师观察台 · Prototype</p><h1>看见“答案之外”的学习过程</h1><p>用过程数据发现学生究竟卡在概念、代码阅读，还是表达与反思。</p></div>
-          <button class="button secondary" id="exportButton">导出本地记录</button>
+          <div class="teacher-actions">
+            <button class="button secondary" id="demoButton">载入匿名示例</button>
+            <button class="button secondary" id="csvButton">导出 CSV</button>
+            <button class="button secondary" id="exportButton">导出 JSON</button>
+          </div>
         </div>
+        <div class="data-notice" id="dataNotice"><strong>数据说明</strong><span>当前仅展示此浏览器中的真实学习记录，不上传服务器。</span></div>
         <div class="metric-grid" id="metricGrid"></div>
         <div class="teacher-grid">
           <section class="panel dashboard-card">
@@ -98,13 +111,13 @@
             <div id="signals" class="signal-list"></div>
           </section>
           <section class="panel dashboard-card wide">
-            <div class="card-title"><div><p class="eyebrow">最近活动</p><h2>学习过程记录</h2></div><button class="text-button" id="resetButton">重置演示数据</button></div>
+            <div class="card-title"><div><p class="eyebrow">最近活动</p><h2>学习过程记录</h2></div><div class="table-tools"><label>单元筛选<select id="lessonFilter"><option value="all">全部</option></select></label><button class="text-button" id="resetButton">清除本地记录</button></div></div>
             <div id="activityTable" class="activity-table"></div>
           </section>
         </div>
       </section>
     </main>
-    <div id="toast" class="toast" role="status"></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script type="module" src="src/app.js"></script>
   </body>
 </html>

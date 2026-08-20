@@ -18,6 +18,7 @@ export const lessons = [
     buggyCode: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 5;\n    int sum;\n    for (int i = 1; i < n; ++i) {\n        sum += i;\n    }\n    cout << sum << endl;\n    return 0;\n}`,
     prediction: { question: "规范代码会输出什么？", choices: ["10", "15", "20", "无法确定"], answer: 1 },
     prompt: "错误版本中有两个问题。请指出它们，并说明每个问题可能造成什么后果。",
+    hints: ["先检查每个变量在第一次被读取前是否已经有确定的值。", "再比较题目要求的范围与循环条件：最后一个数有没有被处理？", "可以分别围绕 sum 的初始值和 i < n 的边界写出两条诊断。"],
     keywords: ["初始化", "sum", "未定义", "<", "<=", "边界", "5", "垃圾值"],
     reference: "sum 没有初始化，读取未初始化的局部变量会产生未定义行为；循环条件 i < n 会漏掉 n，因此若要求累加到 n，应写 i <= n。"
   },
@@ -31,6 +32,7 @@ export const lessons = [
     buggyCode: `int score = 78;\nif (score = 90) {\n    cout << "A";\n} else if (score >= 60) {\n    cout << "Pass";\n}`,
     prediction: { question:"规范代码会输出什么？", choices:["A","Pass","Retry","没有输出"], answer:1 },
     prompt:"错误版本为什么很可能输出 A？请说明 = 和 == 的区别，并给出修改。",
+    hints:["观察 if 括号里的表达式有没有改变变量本身。", "C++ 中单个等号与两个等号承担不同任务。", "赋值表达式 score = 90 的结果是非零值，因此会被当作 true。"],
     keywords:["赋值","比较","=","==","90","true","非零","条件"], reference:"score = 90 是赋值，不是比较；赋值表达式的结果为 90，非零被视为 true，所以进入第一个分支。应改为 score == 90，或按原需求保留 score >= 90。"
   },
   {
@@ -43,6 +45,7 @@ export const lessons = [
     buggyCode:`int a[4] = {3, 6, 9, 12};\nfor (int i = 0; i <= 4; ++i) {\n    cout << a[i] << " ";\n}`,
     prediction:{question:"规范代码打印的最后一个数是什么？",choices:["3","9","12","不确定"],answer:2},
     prompt:"错误循环在哪一次迭代发生越界？为什么编译器不一定报错？如何修复？",
+    hints:["先写出长度为 4 的数组全部合法索引。", "把 i=4 代入 a[i]，判断这个位置是否存在。", "将循环终点从 i <= 4 改为只允许 i 小于数组长度。"],
     keywords:["i=4","4","越界","0","3","i < 4","未定义","运行"],reference:"当 i=4 时访问 a[4]，但合法索引只有 0~3，因此越界并导致未定义行为。C++原生数组通常不做运行时边界检查，应将条件改为 i < 4。"
   },
   {
@@ -55,6 +58,7 @@ export const lessons = [
     buggyCode:`int square(int x) {\n    int result = x * x;\n}\n\nint n = 4;\ncout << square(n);`,
     prediction:{question:"规范代码会输出什么？",choices:["4","8","16","不确定"],answer:2},
     prompt:"错误版本违背了函数的哪项约定？说明风险，并写出最小修改方案。",
+    hints:["先看函数声明承诺返回什么类型。", "再检查所有执行路径是否都把一个值交还给调用处。", "在函数末尾补充 return result; 即可完成最小修复。"],
     keywords:["int","返回","return","result","未定义","值"],reference:"函数声明返回 int，却没有 return 语句；到达函数末尾会导致未定义行为。最小修改是在函数体末尾写 return result;。"
   }
 ];
