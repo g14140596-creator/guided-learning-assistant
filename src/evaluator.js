@@ -1,8 +1,20 @@
 const clamp = (value, min = 0, max = 100) => Math.max(min, Math.min(max, value));
 
+// 关键词匹配：纯字母数字关键词（如 "5"、"sum"）使用词边界 \b，避免子串误匹配
+// （"15" 误命中 "5"、"assume" 误命中 "sum"）；中文与含符号的关键词保持包含匹配，
+// 因为教学关键词如 "初始化"、"<=" 按包含关系判断更符合直觉。
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const matchesKeyword = (text, keyword) => {
+  const kw = keyword.toLowerCase();
+  if (/^[a-z0-9_.]+$/.test(kw)) {
+    return new RegExp(`\\b${escapeRegExp(kw)}\\b`).test(text);
+  }
+  return text.includes(kw);
+};
+
 export function evaluateAnswer({ text = "", reflection = "", choiceCorrect = false, keywords = [] }) {
   const normalized = `${text} ${reflection}`.toLowerCase();
-  const hits = keywords.filter((word) => normalized.includes(word.toLowerCase()));
+  const hits = keywords.filter((word) => matchesKeyword(normalized, word));
   const uniqueHits = new Set(hits).size;
   const sentences = text.split(/[。！？.!?;；]/).filter((item) => item.trim().length > 3).length;
   const hasReasoning = /(因为|因此|所以|导致|意味着|会使|原因|because|therefore)/i.test(normalized);

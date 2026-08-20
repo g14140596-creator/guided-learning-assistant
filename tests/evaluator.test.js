@@ -32,3 +32,18 @@ test("learning signals expose confidence mismatch and hint dependence", () => {
   assert.ok(signals.some((item) => item.title.includes("正确但尚不自信")));
   assert.ok(signals.some((item) => item.title.includes("提示依赖")));
 });
+
+test("keyword matching uses word boundaries, not substring matching", () => {
+  // "15" 不得命中关键词 "5"；"assume" 不得命中 "sum"；中文关键词仍应命中
+  const result = evaluateAnswer({ choiceCorrect: true, text: "结果是 15，assume 变量名没问题，循环边界处理正确。", reflection: "如果 n=0 呢？", keywords: ["5", "sum", "边界"] });
+  assert.ok(!result.matchedKeywords.includes("5"), "15 must not match keyword 5");
+  assert.ok(!result.matchedKeywords.includes("sum"), "assume must not match keyword sum");
+  assert.ok(result.matchedKeywords.includes("边界"), "Chinese keyword should still match");
+});
+
+test("standalone numeric and English keywords still match", () => {
+  const result = evaluateAnswer({ choiceCorrect: true, text: "i 遗漏了 5，sum 没有初始化。", reflection: "", keywords: ["5", "sum", "初始化"] });
+  assert.ok(result.matchedKeywords.includes("5"));
+  assert.ok(result.matchedKeywords.includes("sum"));
+  assert.ok(result.matchedKeywords.includes("初始化"));
+});
