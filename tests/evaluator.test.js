@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { aggregateSessions, evaluateAnswer } from "../src/evaluator.js";
+import { aggregateSessions, deriveLearningSignals, evaluateAnswer } from "../src/evaluator.js";
 
 test("complete reasoned answer scores above a shallow answer", () => {
   const strong = evaluateAnswer({ choiceCorrect: true, text: "sum 没有初始化，因此会读取垃圾值并产生未定义行为；i < n 会遗漏 5，应改为 i <= n。", reflection: "如果 n=0，初始化和边界是否仍然正确？", keywords: ["初始化","sum","未定义","<","<=","边界","5"] });
@@ -15,7 +15,20 @@ test("scores stay within a valid 0-100 range", () => {
 });
 
 test("session aggregation returns rounded averages", () => {
-  const result = aggregateSessions([{ result:{overall:70,dimensions:{correctness:60,clarity:70,depth:80,inquiry:90}} },{ result:{overall:80,dimensions:{correctness:80,clarity:90,depth:60,inquiry:70}} }]);
+  const result = aggregateSessions([{ durationSeconds:120, attempts:1, result:{overall:70,dimensions:{correctness:60,clarity:70,depth:80,inquiry:90}} },{ durationSeconds:180, attempts:2, result:{overall:80,dimensions:{correctness:80,clarity:90,depth:60,inquiry:70}} }]);
   assert.equal(result.overall,75);
   assert.deepEqual(result.averages,{correctness:70,clarity:80,depth:70,inquiry:80});
+  assert.equal(result.totalMinutes, 5);
+  assert.equal(result.averageAttempts, 1.5);
+});
+
+test("learning signals expose confidence mismatch and hint dependence", () => {
+  const sessions = [
+    { choiceCorrect:false, confidence:5, hintsUsed:2, result:{overall:55,dimensions:{correctness:40,clarity:65,depth:55,inquiry:60}} },
+    { choiceCorrect:true, confidence:2, hintsUsed:0, result:{overall:78,dimensions:{correctness:85,clarity:75,depth:74,inquiry:70}} }
+  ];
+  const signals = deriveLearningSignals(sessions);
+  assert.ok(signals.some((item) => item.title.includes("高置信度误判")));
+  assert.ok(signals.some((item) => item.title.includes("正确但尚不自信")));
+  assert.ok(signals.some((item) => item.title.includes("提示依赖")));
 });
