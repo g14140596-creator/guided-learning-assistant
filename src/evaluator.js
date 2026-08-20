@@ -35,9 +35,27 @@ export function evaluateAnswer({ text = "", reflection = "", choiceCorrect = fal
 }
 
 export function aggregateSessions(sessions = []) {
-  if (!sessions.length) return { averages: { correctness: 0, clarity: 0, depth: 0, inquiry: 0 }, overall: 0 };
+  if (!sessions.length) return { averages: { correctness: 0, clarity: 0, depth: 0, inquiry: 0 }, overall: 0, totalMinutes: 0, averageAttempts: 0 };
   const keys = ["correctness", "clarity", "depth", "inquiry"];
   const averages = Object.fromEntries(keys.map((key) => [key, Math.round(sessions.reduce((sum, item) => sum + (item.result?.dimensions?.[key] || 0), 0) / sessions.length)]));
   const overall = Math.round(sessions.reduce((sum, item) => sum + (item.result?.overall || 0), 0) / sessions.length);
-  return { averages, overall };
+  const totalMinutes = Math.max(1, Math.round(sessions.reduce((sum, item) => sum + (item.durationSeconds || 0), 0) / 60));
+  const averageAttempts = Number((sessions.reduce((sum, item) => sum + (item.attempts || 1), 0) / sessions.length).toFixed(1));
+  return { averages, overall, totalMinutes, averageAttempts };
+}
+
+export function deriveLearningSignals(sessions = []) {
+  if (!sessions.length) return [];
+  const summary = aggregateSessions(sessions);
+  const labels = { correctness: "正确性", clarity: "表达规范", depth: "分析深度", inquiry: "反问质量" };
+  const [weakestKey, weakestValue] = Object.entries(summary.averages).sort((a, b) => a[1] - b[1])[0];
+  const lowConfidenceCorrect = sessions.filter((item) => item.choiceCorrect && Number(item.confidence || 3) <= 2).length;
+  const highConfidenceIncorrect = sessions.filter((item) => !item.choiceCorrect && Number(item.confidence || 3) >= 4).length;
+  const hintHeavy = sessions.filter((item) => Number(item.hintsUsed || 0) >= 2).length;
+  const signals = [{ level: "focus", title: `优先提升：${labels[weakestKey]}`, detail: `当前均值 ${weakestValue}。下一次练习应围绕这一能力增加一次针对性追问。` }];
+  if (highConfidenceIncorrect) signals.push({ level: "risk", title: "存在高置信度误判", detail: `${highConfidenceIncorrect} 个单元中，学生非常确定但预测错误，建议先修正概念模型。` });
+  if (lowConfidenceCorrect) signals.push({ level: "growth", title: "正确但尚不自信", detail: `${lowConfidenceCorrect} 个单元预测正确但置信度较低，可通过口头解释巩固。` });
+  if (hintHeavy) signals.push({ level: "focus", title: "对提示依赖较高", detail: `${hintHeavy} 个单元使用了两级以上提示，建议安排相似题做无提示迁移。` });
+  if (signals.length === 1) signals.push({ level: "growth", title: "具备迁移学习条件", detail: "当前未发现明显风险信号，可让学生自己设计一个错误示例。" });
+  return signals;
 }
