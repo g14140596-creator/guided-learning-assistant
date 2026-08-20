@@ -1,0 +1,11 @@
+{
+  "name": "循码 · 引导式学习助教",
+  "short_name": "循码",
+  "description": "面向大学 C/C++ 公共课的引导式学习与形成性评价工具",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f3ed",
+  "theme_color": "#155f4b",
+  "lang": "zh-CN"
+}

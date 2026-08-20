@@ -1,6 +1,6 @@
 {
   "name": "guided-learning-assistant",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "private": true,
   "description": "A guided programming tutor prototype for university introductory C/C++ courses.",
